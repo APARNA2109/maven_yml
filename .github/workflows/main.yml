@@ -1,29 +1,45 @@
-- name: Checkout Repository
-  uses: actions/checkout@v3
+name: Maven Build Workflow
 
-- name: Set Up Java
-  uses: actions/setup-java@v3
-  with:
-    distribution: 'temurin'
-    java-version: '17'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-- name: Install Maven
-  run: sudo apt update && sudo apt install -y maven
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-- name: Ensure POM File Exists
-  run: |
-    if [ ! -f pom.xml ]; then
-      echo "Error: pom.xml not found in the repository!"
-      exit 1
-    fi
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-- name: Execute Maven Goals
-  run: |
-    mvn validate
-    mvn compile
-    mvn test
-    mvn package
-    mvn verify
-    mvn install
-    mvn site
-    mvn clean
+      - name: Set Up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Maven
+        run: sudo apt update && sudo apt install -y maven
+
+      - name: Ensure POM File Exists
+        run: |
+          if [ ! -f pom.xml ]; then
+            echo "Error: pom.xml not found in the repository!"
+            exit 1
+          fi
+
+      - name: Execute Maven Goals
+        run: |
+          mvn validate
+          mvn compile
+          mvn test
+          mvn package
+          mvn verify
+          mvn install
+          mvn site
+          mvn clean
+
